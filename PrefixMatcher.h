@@ -4,21 +4,26 @@
 #include <vector>
 #include <string>
 
+// Define PrefixMatcher class
 class PrefixMatcher {
 public:
-    void insert(std::string address, int routerNumber);
-    int selectRouter(std::string networkAddress);
+    // Inserts a router address
+    void addAddress(const std::string& ipAddress, int routerId);
+    // Selects a router based on network address
+    int chooseRouter(const std::string& networkIp);
 
 private:
+    // Define TrieNode structure
     struct TrieNode {
-        std::vector<int> routerNumbers;
-        std::vector<TrieNode*> children;
-        TrieNode() : routerNumbers(), children(256, nullptr) {}
+        std::vector<int> routerIds;
+        std::vector<TrieNode*> nextNodes;
+        TrieNode() : routerIds(), nextNodes(256, nullptr) {}
     };
 
-    TrieNode* root = nullptr;
+    TrieNode* rootNode = nullptr;
 
-    void insertHelper(std::string address, int routerNumber, TrieNode* node);
+    // Helper function for inserting a router address
+    void insertAddress(const std::string& ipAddress, int routerId, TrieNode* currentNode);
 };
 
 #endif

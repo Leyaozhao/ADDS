@@ -1,35 +1,35 @@
 #include "PrefixMatcher.h"
 
-void PrefixMatcher::insert(std::string address, int routerNumber) {
-    if (!root) {
-        root = new TrieNode();
+void PrefixMatcher::addAddress(const std::string& ipAddress, int routerId) {
+    if (rootNode == nullptr) {
+        rootNode = new TrieNode();
     }
-    insertHelper(address, routerNumber, root);
+    insertAddress(ipAddress, routerId, rootNode);
 }
 
-void PrefixMatcher::insertHelper(std::string address, int routerNumber, TrieNode* node) {
-    for (char c : address) {
-        if (!node->children[c]) {
-            node->children[c] = new TrieNode();
+void PrefixMatcher::insertAddress(const std::string& ipAddress, int routerId, TrieNode* currentNode) {
+    for (char character : ipAddress) {
+        if (currentNode->nextNodes[character] == nullptr) {
+            currentNode->nextNodes[character] = new TrieNode();
         }
-        node = node->children[c];
+        currentNode = currentNode->nextNodes[character];
     }
-    node->routerNumbers.push_back(routerNumber);
+    currentNode->routerIds.push_back(routerId);
 }
 
-int PrefixMatcher::selectRouter(std::string networkAddress) {
-    TrieNode* node = root;
-    int longest = 0;
-    int routerNumber = -1;
-    for (char c : networkAddress) {
-        if (!node->children[c]) {
+int PrefixMatcher::chooseRouter(const std::string& networkIp) {
+    TrieNode* currentNode = rootNode;
+    int longestMatch = 0;
+    int selectedRouter = -1;
+    for (char character : networkIp) {
+        if (currentNode->nextNodes[character] == nullptr) {
             break;
         }
-        node = node->children[c];
-        if (!node->routerNumbers.empty()) {
-            longest = node->routerNumbers.size();
-            routerNumber = node->routerNumbers[0];
+        currentNode = currentNode->nextNodes[character];
+        if (!currentNode->routerIds.empty()) {
+            longestMatch = currentNode->routerIds.size();
+            selectedRouter = currentNode->routerIds[0];
         }
     }
-    return routerNumber;
+    return selectedRouter;
 }
