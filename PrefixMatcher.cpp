@@ -19,7 +19,7 @@ PrefixMatcher::~PrefixMatcher() {
     delete rootNode;
 }
 
-void PrefixMatcher::insertAddress(const std::string& address, int routerId) {
+void PrefixMatcher::insert(const std::string& address, int routerId) {
     Node* current = rootNode;
     for (std::string::const_iterator it = address.begin(); it != address.end(); ++it) {
         int index = *it - '0';
@@ -31,7 +31,7 @@ void PrefixMatcher::insertAddress(const std::string& address, int routerId) {
     current->routerId = routerId;
 }
 
-int PrefixMatcher::findRouter(const std::string& networkAddress) {
+int PrefixMatcher::selectRouter(const std::string& networkAddress) {
     Node* current = rootNode;
     int lastRouterId = -1;
     for (std::string::const_iterator it = networkAddress.begin(); it != networkAddress.end(); ++it) {

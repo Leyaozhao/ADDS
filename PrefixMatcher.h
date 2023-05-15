@@ -20,8 +20,8 @@ public:
     PrefixMatcher();
     ~PrefixMatcher();
 
-    void insertAddress(const std::string& address, int routerId);
-    int findRouter(const std::string& networkAddress);
+    void insert(const std::string& address, int routerId);
+    int selectRouter(const std::string& networkAddress);
 };
 
 #endif  // PREFIX_MATCHER_H
