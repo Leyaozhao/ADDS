@@ -1,16 +1,20 @@
 #include "Autocomplete.h"
 
 Autocomplete::Autocomplete() {
-    root = new TrieNode();
+    root = new TrieNode('\0');
 }
 
 void Autocomplete::insert(std::string word) {
     TrieNode* node = root;
     for (char c : word) {
-        if (!node->children.count(c)) {
-            node->children[c] = new TrieNode();
+        TrieNode* child = findChild(node, c);
+        if (child != nullptr) {
+            node = child;
+        } else {
+            TrieNode* newNode = new TrieNode(c);
+            node->children.push_back(newNode);
+            node = newNode;
         }
-        node = node->children[c];
     }
     node->is_word = true;
 }
@@ -19,10 +23,10 @@ std::vector<std::string> Autocomplete::getSuggestions(std::string partialWord) {
     std::vector<std::string> res;
     TrieNode* node = root;
     for (char c : partialWord) {
-        if (!node->children.count(c)) {
+        node = findChild(node, c);
+        if (node == nullptr) {
             return res;
         }
-        node = node->children[c];
     }
     findWords(node, partialWord, res);
     return res;
@@ -33,6 +37,15 @@ void Autocomplete::findWords(TrieNode* node, std::string word, std::vector<std::
         res.push_back(word);
     }
     for (auto& child : node->children) {
-        findWords(child.second, word + child.first, res);
+        findWords(child, word + child->value, res);
     }
+}
+
+TrieNode* Autocomplete::findChild(TrieNode* parent, char ch) {
+    for (auto& child : parent->children) {
+        if (child->value == ch) {
+            return child;
+        }
+    }
+    return nullptr;
 }

@@ -3,13 +3,12 @@
 
 #include <vector>
 #include <string>
-#include <unordered_map>
 
-class TrieNode {
-public:
+struct TrieNode {
+    char value;
     bool is_word;
-    std::unordered_map<char, TrieNode*> children;
-    TrieNode() : is_word(false) {}
+    std::vector<TrieNode*> children;
+    TrieNode(char val) : value(val), is_word(false) {}
 };
 
 class Autocomplete {
@@ -21,6 +20,7 @@ public:
 private:
     TrieNode* root;
     void findWords(TrieNode* node, std::string word, std::vector<std::string>& res);
+    TrieNode* findChild(TrieNode* parent, char ch);
 };
 
 #endif
