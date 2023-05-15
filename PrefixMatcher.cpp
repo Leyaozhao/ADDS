@@ -1,35 +1,48 @@
 #include "PrefixMatcher.h"
 
-void PrefixMatcher::addAddress(const std::string& ipAddress, int routerId) {
-    if (rootNode == nullptr) {
-        rootNode = new TrieNode();
-    }
-    insertAddress(ipAddress, routerId, rootNode);
+Node::Node() {
+    routerId = -1;
+    branch[0] = nullptr;
+    branch[1] = nullptr;
 }
 
-void PrefixMatcher::insertAddress(const std::string& ipAddress, int routerId, TrieNode* currentNode) {
-    for (char character : ipAddress) {
-        if (currentNode->nextNodes[character] == nullptr) {
-            currentNode->nextNodes[character] = new TrieNode();
+Node::~Node() {
+    delete branch[0];
+    delete branch[1];
+}
+
+PrefixMatcher::PrefixMatcher() {
+    rootNode = new Node();
+}
+
+PrefixMatcher::~PrefixMatcher() {
+    delete rootNode;
+}
+
+void PrefixMatcher::insertAddress(const std::string& address, int routerId) {
+    Node* current = rootNode;
+    for (char digit : address) {
+        int index = digit - '0';
+        if (current->branch[index] == nullptr) {
+            current->branch[index] = new Node();
         }
-        currentNode = currentNode->nextNodes[character];
+        current = current->branch[index];
     }
-    currentNode->routerIds.push_back(routerId);
+    current->routerId = routerId;
 }
 
-int PrefixMatcher::chooseRouter(const std::string& networkIp) {
-    TrieNode* currentNode = rootNode;
-    int longestMatch = 0;
-    int selectedRouter = -1;
-    for (char character : networkIp) {
-        if (currentNode->nextNodes[character] == nullptr) {
+int PrefixMatcher::findRouter(const std::string& networkAddress) {
+    Node* current = rootNode;
+    int lastRouterId = -1;
+    for (char digit : networkAddress) {
+        int index = digit - '0';
+        if (current->branch[index] == nullptr) {
             break;
         }
-        currentNode = currentNode->nextNodes[character];
-        if (!currentNode->routerIds.empty()) {
-            longestMatch = currentNode->routerIds.size();
-            selectedRouter = currentNode->routerIds[0];
+        current = current->branch[index];
+        if (current->routerId != -1) {
+            lastRouterId = current->routerId;
         }
     }
-    return selectedRouter;
+    return lastRouterId;
 }

@@ -1,29 +1,27 @@
-#ifndef PREFIXMATCHER_H
-#define PREFIXMATCHER_H
+#ifndef PREFIX_MATCHER_H
+#define PREFIX_MATCHER_H
 
-#include <vector>
 #include <string>
 
-// Define PrefixMatcher class
-class PrefixMatcher {
+class Node {
 public:
-    // Inserts a router address
-    void addAddress(const std::string& ipAddress, int routerId);
-    // Selects a router based on network address
-    int chooseRouter(const std::string& networkIp);
+    int routerId;
+    Node* branch[2];
 
-private:
-    // Define TrieNode structure
-    struct TrieNode {
-        std::vector<int> routerIds;
-        std::vector<TrieNode*> nextNodes;
-        TrieNode() : routerIds(), nextNodes(256, nullptr) {}
-    };
-
-    TrieNode* rootNode = nullptr;
-
-    // Helper function for inserting a router address
-    void insertAddress(const std::string& ipAddress, int routerId, TrieNode* currentNode);
+    Node();
+    ~Node();
 };
 
-#endif
+class PrefixMatcher {
+private:
+    Node* rootNode;
+
+public:
+    PrefixMatcher();
+    ~PrefixMatcher();
+
+    void insertAddress(const std::string& address, int routerId);
+    int findRouter(const std::string& networkAddress);
+};
+
+#endif  // PREFIX_MATCHER_H
