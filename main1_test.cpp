@@ -2,24 +2,15 @@
 #include <iostream>
 
 int main() {
-    Autocomplete autocomplete;
-    
-    // Insert words into the Autocomplete system
-    autocomplete.insert("apple");
-    autocomplete.insert("banana");
-    autocomplete.insert("apricot");
-    autocomplete.insert("grape");
-    autocomplete.insert("grapefruit");
-    autocomplete.insert("mango");
+    Autocomplete ac;
+    ac.insert("hello");
+    ac.insert("hell");
+    ac.insert("heaven");
+    ac.insert("goodbye");
 
-    // Get suggestions
-    std::string testWord = "ap";
-    std::vector<std::string> suggestions = autocomplete.getSuggestions(testWord);
-
-    // Print out the suggestions
-    std::cout << "Suggestions for \"" << testWord << "\":\n";
-    for (const std::string& word : suggestions) {
-        std::cout << word << std::endl;
+    std::vector<std::string> suggestions = ac.getSuggestions("he");
+    for (std::vector<std::string>::iterator it = suggestions.begin(); it != suggestions.end(); ++it) {
+        std::cout << *it << std::endl;
     }
 
     return 0;
